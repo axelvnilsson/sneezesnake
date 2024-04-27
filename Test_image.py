@@ -22,7 +22,7 @@ def load_and_slice_image(filepath):
 
 def main():
     screen = init_pygame()
-    tiles = load_and_slice_image('snake.png')  # Load and slice the image
+    tiles = load_and_slice_image('Images/snake.png')  # Load and slice the image
     running = True
     while running:
         for event in pygame.event.get():

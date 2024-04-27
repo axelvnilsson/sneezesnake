@@ -67,8 +67,12 @@ def game_loop():
 
         while game_close:
             game_window.fill(black)
-            game_over_text = font_style.render("Game Over! Press Q-Quit or C-Play Again", True, white)
-            game_window.blit(game_over_text, [width / 4, height / 3])
+            game_over_text1 = font_style.render("Game Over!", True, white)
+            game_over_text2 = font_style.render("[Q] to Quit ", True, white)
+            game_over_text3 = font_style.render("[P] to Play Again", True, white)
+            game_window.blit(game_over_text1, [width / 4, height / 3])
+            game_window.blit(game_over_text2, [width / 4, height / 3 + 50])
+            game_window.blit(game_over_text3, [width / 4, height / 3 + 100])
             display_score(length_of_snake - 1)
             pygame.display.update()
 
@@ -77,7 +81,7 @@ def game_loop():
                     if event.key == pygame.K_q:
                         game_over = True
                         game_close = False
-                    elif event.key == pygame.K_c:
+                    elif event.key == pygame.K_p:
                         game_loop()
 
         for event in pygame.event.get():
