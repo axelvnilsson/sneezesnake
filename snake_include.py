@@ -46,7 +46,7 @@ def splash_screen(game_window, font_style, width, height, score, high_score):
 
 def game_over_screen(game_window, font_style, width, height, score):
     while True:
-        clear_screen(game_window,(0, 0, 0))  # Black background
+        # clear_screen(game_window,(0, 0, 0))  # Black background
         game_over_text1 = font_style.render("Game Over!", True, (255, 255, 255))
         game_over_text2 = font_style.render("[Q] to Quit ", True, (255, 255, 255))
         game_over_text3 = font_style.render("[P] to Play Again", True, (255, 255, 255))
