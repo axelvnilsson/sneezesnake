@@ -21,10 +21,10 @@ red = (255, 0, 0)
 black = (0, 0, 0)
 yellow = (255, 255, 0)
 
-def game_loop():
+def sneeze_snake():
     global high_score  # Declare high_score as global to ensure it retains value across game sessions
-    game_active = True
 
+    game_active = True
     while game_active:
         # Game state variables
         game_over = False
@@ -132,4 +132,4 @@ def game_loop():
     pygame.quit()
     quit()
 
-game_loop()
+sneeze_snake()
