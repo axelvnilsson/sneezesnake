@@ -19,6 +19,27 @@ def draw_food(game_window, block_size, food_color, food_x, food_y):
 def clear_screen(game_window, background_color):
     game_window.fill(background_color)  # Fill the screen with the background color
 
+def splash_screen(game_window, font_style, width, height, score):
+    while True:
+        clear_screen(game_window,(0, 0, 0))  # Black background
+        splash_screen_text1 = font_style.render("This is a better version of snake!", True, (255, 255, 255))
+        splash_screen_text2 = font_style.render("It is called Sneeze Snake", True, (255, 255, 255))
+        splash_screen_text3 = font_style.render("By Axel Nilsson", True, (255, 255, 255))
+        splash_screen_text4 = font_style.render("[S] to  play!", True, (255, 255, 255))
+        game_window.blit(splash_screen_text1, [width / 4, height / 3])
+        game_window.blit(splash_screen_text2, [width / 4, height / 3 + 50])
+        game_window.blit(splash_screen_text3, [width / 4, height / 3 + 100])
+        game_window.blit(splash_screen_text4, [width / 4, height / 3 + 150])
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    return False  # Quit the game
+                elif event.key == pygame.K_s:
+                    return True  # to play the game
+                
+
 def game_over_screen(game_window, font_style, width, height, score):
     while True:
         clear_screen(game_window,(0, 0, 0))  # Black background

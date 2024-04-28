@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from snake_include import game_over_screen, clear_screen, draw_snake, draw_food, draw_chaser, handle_key_events, display_score  # Import the game over and all other functions
+from snake_include import splash_screen, game_over_screen, clear_screen, draw_snake, draw_food, draw_chaser, handle_key_events, display_score  # Import the game over and all other functions
 
 # Initialize Pygame and other game settings
 pygame.init()
@@ -21,13 +21,15 @@ black = (0, 0, 0)
 yellow = (255, 255, 0)  
 
 def game_loop():
+    # Gate state variables
+    game_active = True
+    game_over = False
+    game_start = True
+
     # Game settings
     update_player = 1
     setting_background_color = blue
 
-    # Gate state variables
-    game_active = True
-    game_over = False
 
     # Snake parameters
     snake_x = width / 2
@@ -57,14 +59,10 @@ def game_loop():
 
     while game_active:
 
-        while game_over:
+        while game_start:
             # Handle game over scenario
-            restart_from_beginning = game_over_screen(game_window, font_style, width, height, score)
-            if restart_from_beginning == True:
-                game_loop()  # Restart the game from the beginning
-            else:
-                game_over = False # Don't go back and show the game over screen again
-                game_active = False # Don't quit out of the game
+            splash_screen(game_window, font_style, width, height, score)
+            game_start = False
 
         # Handle key events - this returns the change in x and y coordinates depending on which key is pressed
         # The keys used to move the snake are the arrow keys and the WASD keys or the arrow keys depending on
@@ -125,6 +123,17 @@ def game_loop():
         display_score(game_window, font_style, score_color, score)
         pygame.display.update()
         clock.tick(snake_speed)
+
+        while game_over:
+            # Handle game over scenario
+            restart_from_beginning = game_over_screen(game_window, font_style, width, height, score)
+            if restart_from_beginning == True:
+                game_start = True
+                game_loop()  # Restart the game from the beginning
+            else:
+                game_over = False # Don't go back and show the game over screen again
+                game_active = False # Don't quit out of the game
+
 
     pygame.quit()
     quit()
