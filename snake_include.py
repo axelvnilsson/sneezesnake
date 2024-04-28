@@ -24,3 +24,23 @@ def handle_game_over(game_window, font_style, width, height, score):
                     return False  # Quit the game
                 elif event.key == pygame.K_p:
                     return True  # Play again
+
+def handle_key_events(x_change, y_change, block_size):
+    game_interrupted = False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_interrupted = True
+        if event.type == pygame.KEYDOWN:
+            if (event.key == pygame.K_LEFT or event.key == pygame.K_a) and x_change == 0:
+                x_change = -block_size
+                y_change = 0
+            elif (event.key == pygame.K_RIGHT or event.key == pygame.K_d) and x_change == 0:
+                x_change = block_size
+                y_change = 0
+            elif (event.key == pygame.K_UP or event.key == pygame.K_w) and y_change == 0:
+                y_change = -block_size
+                x_change = 0
+            elif (event.key == pygame.K_DOWN or event.key == pygame.K_s) and y_change == 0:
+                y_change = block_size
+                x_change = 0
+    return x_change, y_change, game_interrupted

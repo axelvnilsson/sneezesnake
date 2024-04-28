@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from snake_include import handle_game_over  # Import the game over function
+from snake_include import handle_game_over, handle_key_events  # Import the game over and all other functions
 
 # Initialize Pygame and other game settings
 pygame.init()
@@ -36,8 +36,8 @@ def draw_chaser(chaser_x, chaser_y):
     pygame.draw.rect(game_window, yellow, [int(chaser_x), int(chaser_y), block_size, block_size])
 
 def game_loop():
+    game_active = True
     game_over = False
-    game_close = False
 
     # Snake parameters
     x = width / 2
@@ -58,36 +58,25 @@ def game_loop():
     chaser_y = random.randrange(0, height - block_size, block_size)
     chaser_speed = 5  # Initial chaser speed
 
-    while not game_over:
+    while game_active:
 
-        while game_close:
+        while game_over:
             # Handle game over scenario
-            continue_game = handle_game_over(game_window, font_style, width, height, length_of_snake - 1)
-            if continue_game:
-                game_loop()  # Restart the game
+            restart_from_beginning = handle_game_over(game_window, font_style, width, height, length_of_snake - 1)
+            if restart_from_beginning == True:
+                game_loop()  # Restart the game from the beginning
             else:
-                game_over = True  # Quit the game
-                game_close = False
+                game_over = False # Don't go back and show the game over screen again
+                game_active = False # Don't quit out of the game
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game_over = True
-            if event.type == pygame.KEYDOWN:
-                if (event.key == pygame.K_LEFT or event.key == pygame.K_a) and x_change == 0:
-                    x_change = -block_size
-                    y_change = 0
-                elif (event.key == pygame.K_RIGHT or event.key == pygame.K_d) and x_change == 0:
-                    x_change = block_size
-                    y_change = 0
-                elif (event.key == pygame.K_UP or event.key == pygame.K_w) and y_change == 0:
-                    y_change = -block_size
-                    x_change = 0
-                elif (event.key == pygame.K_DOWN or event.key == pygame.K_s) and y_change == 0:
-                    y_change = block_size
-                    x_change = 0
+        # Handle key events - this returns the change in x and y coordinates depending on which key is pressed
+        # The keys used to move the snake are the arrow keys and the WASD keys or the arrow keys
+        x_change, y_change, game_interrupted = handle_key_events(x_change, y_change, block_size)
+        if game_interrupted:
+            break
 
         if x >= width or x < 0 or y >= height or y < 0:
-            game_close = True
+            game_over = True
 
         x += x_change
         y += y_change
@@ -120,7 +109,7 @@ def game_loop():
 
         # Check for collision with chaser
         if abs(x - chaser_x) < block_size and abs(y - chaser_y) < block_size:
-            game_close = True
+            game_over = True
 
         display_score(length_of_snake - 1)
 
