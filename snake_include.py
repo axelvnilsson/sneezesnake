@@ -10,9 +10,18 @@ def draw_snake(game_window, block_size, snake_color, snake_list):
     for block in snake_list:
         pygame.draw.rect(game_window, snake_color, [int(block[0]), int(block[1]), block_size, block_size])
 
+def draw_chaser(game_window, block_size, chaser_color, chaser_x, chaser_y):
+    pygame.draw.rect(game_window, chaser_color, [int(chaser_x), int(chaser_y), block_size, block_size])
+
+def draw_food(game_window, block_size, food_color, food_x, food_y):
+    pygame.draw.rect(game_window, food_color, [food_x, food_y, block_size, block_size])
+
+def clear_screen(game_window, background_color):
+    game_window.fill(background_color)  # Fill the screen with the background color
+
 def game_over_screen(game_window, font_style, width, height, score):
     while True:
-        game_window.fill((0, 0, 0))  # Black background
+        clear_screen(game_window,(0, 0, 0))  # Black background
         game_over_text1 = font_style.render("Game Over!", True, (255, 255, 255))
         game_over_text2 = font_style.render("[Q] to Quit ", True, (255, 255, 255))
         game_over_text3 = font_style.render("[P] to Play Again", True, (255, 255, 255))
