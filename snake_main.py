@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from snake_include import handle_game_over, handle_key_events  # Import the game over and all other functions
+from snake_include import game_over_screen, draw_snake, handle_key_events, display_score  # Import the game over and all other functions
 
 # Initialize Pygame and other game settings
 pygame.init()
@@ -10,6 +10,7 @@ game_window = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Snake Game')
 clock = pygame.time.Clock()
 font_style = pygame.font.SysFont(None, 50)
+block_size = 20
 
 # Colors
 blue = (0, 0, 255)
@@ -19,50 +20,49 @@ red = (255, 0, 0)
 black = (0, 0, 0)
 yellow = (255, 255, 0)  # Color for the chaser
 
-# Snake attributes
-block_size = 20
-snake_speed = 15
 
-
-def display_score(score):
-    score_text = font_style.render("Score: " + str(score), True, white)
-    game_window.blit(score_text, [0, 0])
-
-def draw_snake(snake_list):
-    for block in snake_list:
-        pygame.draw.rect(game_window, green, [int(block[0]), int(block[1]), block_size, block_size])
 
 def draw_chaser(chaser_x, chaser_y):
     pygame.draw.rect(game_window, yellow, [int(chaser_x), int(chaser_y), block_size, block_size])
 
 def game_loop():
+    # Game settings
+    update_player = 1
+
+    # Gate state variables
     game_active = True
     game_over = False
 
     # Snake parameters
-    x = width / 2
-    y = height / 2
-    x_change = 0
-    y_change = 0
-
+    snake_x = width / 2
+    snake_y = height / 2
+    snake_x_change = 0
+    snake_y_change = 0
+    snake_speed = 15
     snake_list = []
-    length_of_snake = 1
-    last_speed_increase = 0  # Initialize the last_speed_increase variable
-
-    # Initial position of the food
-    food_x = round(random.randrange(0, width - block_size) / block_size) * block_size
-    food_y = round(random.randrange(0, height - block_size) / block_size) * block_size
+    snake_length = 1
+    snake_color = green
 
     # Chaser parameters
     chaser_x = random.randrange(0, width - block_size, block_size)
     chaser_y = random.randrange(0, height - block_size, block_size)
     chaser_speed = 5  # Initial chaser speed
 
+    # Game parameters
+    score = 0
+    score_color = white
+    last_speed_increase = 0  # Initialize the last_speed_increase variable
+
+    # Initial position of the food
+    food_x = round(random.randrange(0, width - block_size) / block_size) * block_size
+    food_y = round(random.randrange(0, height - block_size) / block_size) * block_size
+
+
     while game_active:
 
         while game_over:
             # Handle game over scenario
-            restart_from_beginning = handle_game_over(game_window, font_style, width, height, length_of_snake - 1)
+            restart_from_beginning = game_over_screen(game_window, font_style, width, height, score)
             if restart_from_beginning == True:
                 game_loop()  # Restart the game from the beginning
             else:
@@ -70,61 +70,63 @@ def game_loop():
                 game_active = False # Don't quit out of the game
 
         # Handle key events - this returns the change in x and y coordinates depending on which key is pressed
-        # The keys used to move the snake are the arrow keys and the WASD keys or the arrow keys
-        x_change, y_change, game_interrupted = handle_key_events(x_change, y_change, block_size)
+        # The keys used to move the snake are the arrow keys and the WASD keys or the arrow keys depending on
+        # the value of the update_player variable
+
+        snake_x_change, snake_y_change, game_interrupted = handle_key_events(snake_x_change, snake_y_change, block_size, update_player)
         if game_interrupted:
             break
 
-        if x >= width or x < 0 or y >= height or y < 0:
+        if snake_x >= width or snake_x < 0 or snake_y >= height or snake_y < 0:
             game_over = True
 
-        x += x_change
-        y += y_change
+        snake_x += snake_x_change
+        snake_y += snake_y_change
 
         # Chaser movement logic
-        if chaser_x < x:
+        if chaser_x < snake_x:
             chaser_x += chaser_speed
-        elif chaser_x > x:
+        elif chaser_x > snake_x:
             chaser_x -= chaser_speed
 
-        if chaser_y < y:
+        if chaser_y < snake_y:
             chaser_y += chaser_speed
-        elif chaser_y > y:
+        elif chaser_y > snake_y:
             chaser_y -= chaser_speed
 
-        game_window.fill(blue)
+        game_window.fill(blue) # This clears the screen before drawing the next frame
+
         pygame.draw.rect(game_window, red, [food_x, food_y, block_size, block_size])
 
-        snake_head = [x, y]
+        snake_head = [snake_x, snake_y]
         snake_list.append(snake_head)
-        if len(snake_list) > length_of_snake:
+        if len(snake_list) > snake_length:
             del snake_list[0]
 
         for block in snake_list[:-1]:
             if block == snake_head:
                 game_close = True
 
-        draw_snake(snake_list)
-        draw_chaser(chaser_x, chaser_y)
-
         # Check for collision with chaser
-        if abs(x - chaser_x) < block_size and abs(y - chaser_y) < block_size:
+        if abs(snake_x - chaser_x) < block_size and abs(snake_y - chaser_y) < block_size:
             game_over = True
 
-        display_score(length_of_snake - 1)
-
         # Increment chaser speed gradually
-        if length_of_snake > 10 and (length_of_snake - 1) % 10 == 0 and (length_of_snake - 1) != last_speed_increase:
+        if snake_length > 10 and (snake_length - 1) % 10 == 0 and (snake_length - 1) != last_speed_increase:
             chaser_speed += 2
-            last_speed_increase = length_of_snake - 1
+            last_speed_increase = snake_length - 1
 
-        pygame.display.update()
-
-        if x == food_x and y == food_y:
+        # Check for snake catching food and increasing score
+        if snake_x == food_x and snake_y == food_y:
             food_x = round(random.randrange(0, width - block_size) / block_size) * block_size
             food_y = round(random.randrange(0, height - block_size) / block_size) * block_size
-            length_of_snake += 1
+            snake_length += 1
+            score += 1
 
+        draw_snake(game_window, block_size, snake_color, snake_list)
+        draw_chaser(chaser_x, chaser_y)
+        display_score(game_window, font_style, score_color, score)
+        pygame.display.update()
         clock.tick(snake_speed)
 
     pygame.quit()
