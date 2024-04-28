@@ -4,6 +4,7 @@ They will beat the Lakers
 
                         Ideas!
 
+1. Add high score to the splash screen.
 2. Make the snake more realistic the farther you go on in the game, and start out basic.
 3. A powerup when you pick it up and die you respawn and your score does not change.
 4. Multiplayer.
@@ -16,5 +17,9 @@ They will beat the Lakers
                         Later projects
 
 1. Make a settings menu.
+
+                        Completed Ideas!
+
+1. Splash screen
 
 My personal best in 30 points!

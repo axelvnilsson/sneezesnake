@@ -11,6 +11,7 @@ pygame.display.set_caption('Snake Game')
 clock = pygame.time.Clock()
 font_style = pygame.font.SysFont(None, 50)
 block_size = 20
+high_score = 0
 
 # Colors
 blue = (0, 0, 255)
@@ -29,6 +30,7 @@ def game_loop():
     # Game settings
     update_player = 1
     setting_background_color = blue
+    high_score = 0
 
 
     # Snake parameters
@@ -61,8 +63,12 @@ def game_loop():
 
         while game_start:
             # Handle game over scenario
-            splash_screen(game_window, font_style, width, height, score)
-            game_start = False
+            quit_the_game = splash_screen(game_window, font_style, width, height, score, high_score)
+            if quit_the_game == True:
+                game_active = False # Don't quit out of the game
+                game_start = False
+            else:
+                game_start = False
 
         # Handle key events - this returns the change in x and y coordinates depending on which key is pressed
         # The keys used to move the snake are the arrow keys and the WASD keys or the arrow keys depending on
@@ -115,6 +121,10 @@ def game_loop():
             snake_length += 1
             score += 1
 
+        # Update the high score
+        if score > high_score:
+            high_score = score
+            
         # Draw the game elements
         clear_screen(game_window, setting_background_color) # This clears the screen before drawing the next frame
         draw_food(game_window, block_size, food_color, food_x, food_y) # Draw the food
