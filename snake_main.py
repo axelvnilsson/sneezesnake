@@ -1,11 +1,15 @@
 import pygame
 import random
 
-pygame.init()
+from snake_include import handle_game_over  # Import the game over function
 
-# Window dimensions
-width = 800
-height = 600
+# Initialize Pygame and other game settings
+pygame.init()
+width, height = 800, 600
+game_window = pygame.display.set_mode((width, height))
+pygame.display.set_caption('Snake Game')
+clock = pygame.time.Clock()
+font_style = pygame.font.SysFont(None, 50)
 
 # Colors
 blue = (0, 0, 255)
@@ -19,15 +23,6 @@ yellow = (255, 255, 0)  # Color for the chaser
 block_size = 20
 snake_speed = 15
 
-# Initialize window
-game_window = pygame.display.set_mode((width, height))
-pygame.display.set_caption('Snake Game')
-
-# Clock for controlling speed
-clock = pygame.time.Clock()
-
-# Font settings
-font_style = pygame.font.SysFont(None, 50)
 
 def display_score(score):
     score_text = font_style.render("Score: " + str(score), True, white)
@@ -66,23 +61,13 @@ def game_loop():
     while not game_over:
 
         while game_close:
-            game_window.fill(black)
-            game_over_text1 = font_style.render("Game Over!", True, white)
-            game_over_text2 = font_style.render("[Q] to Quit ", True, white)
-            game_over_text3 = font_style.render("[P] to Play Again", True, white)
-            game_window.blit(game_over_text1, [width / 4, height / 3])
-            game_window.blit(game_over_text2, [width / 4, height / 3 + 50])
-            game_window.blit(game_over_text3, [width / 4, height / 3 + 100])
-            display_score(length_of_snake - 1)
-            pygame.display.update()
-
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        game_over = True
-                        game_close = False
-                    elif event.key == pygame.K_p:
-                        game_loop()
+            # Handle game over scenario
+            continue_game = handle_game_over(game_window, font_style, width, height, length_of_snake - 1)
+            if continue_game:
+                game_loop()  # Restart the game
+            else:
+                game_over = True  # Quit the game
+                game_close = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
