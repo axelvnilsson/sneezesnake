@@ -1,6 +1,8 @@
 import pygame
 import random
 
+from snake_include import ticker_load_facts, ticker_setup, ticker_update
+
 # Initialize pygame
 pygame.init()
 
@@ -9,29 +11,24 @@ screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Snake Game')
+font_style = pygame.font.Font(None, 32)
 
 # Define colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+GRAY = (128, 128, 128)
 
 # Set up clock
 clock = pygame.time.Clock()
 
-# Load snake facts from file
-with open('snake_facts.txt', 'r') as file:
-    facts = file.readlines()
+# Load facts
+facts = ticker_load_facts()
+ticker_color = GRAY
 
-# Function to get a random fact
-def get_random_fact():
-    return random.choice(facts).strip()
-
-# Initial ticker setup
-font = pygame.font.Font(None, 32)
-text = font.render(get_random_fact(), True, WHITE)
-text_rect = text.get_rect()
-text_rect.right = screen_width  # Start off right edge of screen
-text_rect.bottom = screen_height  # Position at the bottom of the screen
+# Setup initial texts
+current_text, current_text_rect = ticker_setup(facts, ticker_color, font_style, screen_width, screen_height)
+next_text, next_text_rect = None, None
 
 # Initial position of the apple
 apple_x = random.randint(0, screen_width-20)
@@ -46,7 +43,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Move the apple
+    # Apple movement controls
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RIGHT]:
         apple_x += 5
@@ -70,16 +67,11 @@ while running:
     # Draw the apple
     pygame.draw.rect(screen, RED, (apple_x, apple_y, 20, 20))
 
-    # Update text position for the ticker
-    text_rect.x -= 2  # Move text left
-    if text_rect.right < 0:  # If text has moved past the left side
-        text = font.render(get_random_fact(), True, WHITE)  # Get new fact
-        text_rect = text.get_rect()
-        text_rect.left = screen_width  # Start from the right again
-        text_rect.bottom = screen_height  # Keep it at the bottom
-
-    # Draw the text
-    screen.blit(text, text_rect)
+    # Draw ticker
+    current_text, current_text_rect, next_text, next_text_rect = ticker_update(font_style, current_text, current_text_rect, next_text, next_text_rect, facts, ticker_color, screen_width, screen_height)
+    screen.blit(current_text, current_text_rect)
+    if next_text:
+        screen.blit(next_text, next_text_rect)
 
     pygame.display.update()
     clock.tick(40)
