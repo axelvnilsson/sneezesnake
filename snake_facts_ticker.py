@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from snake_include import ticker_load_facts, ticker_setup, ticker_update
+from snake_include import ticker_load_facts, ticker_update, ticker_setup
 
 # Initialize pygame
 pygame.init()
@@ -11,24 +11,20 @@ screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Snake Game')
-font_style = pygame.font.Font(None, 32)
 
 # Define colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
-GRAY = (128, 128, 128)
+
+ticker_color = WHITE
+ticker_font = pygame.font.Font(None, 32)
 
 # Set up clock
 clock = pygame.time.Clock()
 
-# Load facts
-facts = ticker_load_facts()
-ticker_color = GRAY
-
-# Setup initial texts
-current_text, current_text_rect = ticker_setup(facts, ticker_color, font_style, screen_width, screen_height)
-next_text, next_text_rect = None, None
+ticker_tape = ticker_load_facts()
+text, text_rect = ticker_setup(ticker_tape, ticker_font, ticker_color, screen_width, screen_height)
 
 # Initial position of the apple
 apple_x = random.randint(0, screen_width-20)
@@ -67,11 +63,9 @@ while running:
     # Draw the apple
     pygame.draw.rect(screen, RED, (apple_x, apple_y, 20, 20))
 
-    # Draw ticker
-    current_text, current_text_rect, next_text, next_text_rect = ticker_update(font_style, current_text, current_text_rect, next_text, next_text_rect, facts, ticker_color, screen_width, screen_height)
-    screen.blit(current_text, current_text_rect)
-    if next_text:
-        screen.blit(next_text, next_text_rect)
+    # Update and draw the ticker
+    text, text_rect = ticker_update(text, text_rect)
+    screen.blit(text, text_rect)
 
     pygame.display.update()
     clock.tick(40)

@@ -113,39 +113,22 @@ def handle_key_events(snake_x_change, snake_y_change, block_size, player):
     return snake_x_change, snake_y_change, game_interrupted
 
 def ticker_load_facts():
-    # Load snake facts from file
+    # Load snake facts from file and create a single long string with all facts in random order
     with open('snake_facts.txt', 'r') as file:
         facts = file.readlines()
-    return facts
+    random.shuffle(facts)
+    ticker_tape = " ... ".join([fact.strip() for fact in facts]) + " ... "
+    return ticker_tape
 
-def ticker_setup(facts, ticker_color, font_style, screen_width, screen_height):
-    # Initialize ticker with random fact and append separator
-    initial_fact = random.choice(facts).strip() + " --- "
-    text = font_style.render(initial_fact, True, ticker_color)
+def ticker_setup(ticker_tape, ticker_font, ticker_color, screen_width, screen_height):
+    # Initialize ticker with the long text
+    text = ticker_font.render(ticker_tape, True, ticker_color)
     text_rect = text.get_rect()
     text_rect.left = screen_width  # Start off right edge of screen
     text_rect.bottom = screen_height  # Position at the bottom of the screen
     return text, text_rect
 
-def ticker_update(font_style, current_text, current_text_rect, next_text, next_text_rect, facts, ticker_color, screen_width, screen_height):
-    # Move current text left
-    current_text_rect.x -= 2
-    if next_text:
-        next_text_rect.x -= 2  # Move next text left if it exists
-
-    # Check if new next text is needed
-    if current_text_rect.right < screen_width and not next_text:
-        new_fact = random.choice(facts).strip() + " --- "
-        next_text = font_style.render(new_fact, True, ticker_color)
-        next_text_rect = next_text.get_rect()
-        next_text_rect.left = screen_width  # Start new text at the right edge
-        next_text_rect.bottom = screen_height  # Keep it at the bottom
-
-    # Reset texts if current text is fully off-screen
-    if current_text_rect.right < 0:
-        current_text = next_text
-        current_text_rect = next_text_rect
-        next_text = None
-        next_text_rect = None
-
-    return current_text, current_text_rect, next_text, next_text_rect
+def ticker_update(text, text_rect):
+    # Move text left
+    text_rect.x -= 2
+    return text, text_rect
