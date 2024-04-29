@@ -18,7 +18,7 @@ def draw_food(game_window, block_size, food_color, food_x, food_y):
     pygame.draw.rect(game_window, food_color, [food_x, food_y, block_size, block_size])
 
 def draw_ticker(game_window, text, text_rect):
-    text, text_rect = ticker_update(text, text_rect)
+    text_rect.x -= 2
     game_window.blit(text, text_rect)
     return text, text_rect
 
@@ -133,7 +133,4 @@ def ticker_setup(ticker_tape, ticker_font, ticker_color, screen_width, screen_he
     text_rect.bottom = screen_height  # Position at the bottom of the screen
     return text, text_rect
 
-def ticker_update(text, text_rect):
-    # Move text left
-    text_rect.x -= 2
-    return text, text_rect
+

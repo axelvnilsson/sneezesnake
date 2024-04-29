@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from snake_include import ticker_load_facts, ticker_update, ticker_setup, draw_ticker
+from snake_include import ticker_load_facts, ticker_setup, draw_ticker
 
 # Initialize pygame
 pygame.init()
