@@ -17,6 +17,11 @@ def draw_chaser(game_window, block_size, chaser_color, chaser_x, chaser_y):
 def draw_food(game_window, block_size, food_color, food_x, food_y):
     pygame.draw.rect(game_window, food_color, [food_x, food_y, block_size, block_size])
 
+def draw_ticker(game_window, text, text_rect):
+    text, text_rect = ticker_update(text, text_rect)
+    game_window.blit(text, text_rect)
+    return text, text_rect
+
 def clear_screen(game_window, background_color):
     game_window.fill(background_color)  # Fill the screen with the background color
 
