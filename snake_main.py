@@ -5,8 +5,8 @@ from snake_include import splash_screen, game_over_screen, clear_screen, draw_sn
 
 # Initialize Pygame and other game settings
 pygame.init()
-width, height = 800, 600
-game_window = pygame.display.set_mode((width, height))
+game_width, game_height = 800, 600
+game_window = pygame.display.set_mode((game_width, game_height))
 pygame.display.set_caption('Snake Game')
 clock = pygame.time.Clock()
 font_style = pygame.font.SysFont(None, 50)
@@ -35,8 +35,8 @@ def sneeze_snake():
         setting_background_color = blue
 
         # Snake parameters
-        snake_x = width / 2
-        snake_y = height / 2
+        snake_x = game_width / 2
+        snake_y = game_height / 2
         snake_x_change = 0
         snake_y_change = 0
         snake_speed = 15
@@ -45,9 +45,11 @@ def sneeze_snake():
         snake_color = green
 
         # Chaser parameters
-        chaser_x = random.randrange(0, width - block_size, block_size)
-        chaser_y = random.randrange(0, height - block_size, block_size)
+        chaser_x = random.randrange(0, game_width - block_size, block_size)
+        chaser_y = random.randrange(0, game_height - block_size, block_size)
         chaser_speed = 5
+        chaser_list = []
+        chase_length = 1
         chaser_color = yellow
 
         # Game parameters
@@ -56,13 +58,13 @@ def sneeze_snake():
         last_speed_increase = 0
 
         # Initial position of the food
-        food_x = round(random.randrange(0, width - block_size) / block_size) * block_size
-        food_y = round(random.randrange(0, height - block_size) / block_size) * block_size
+        food_x = round(random.randrange(0, game_width - block_size) / block_size) * block_size
+        food_y = round(random.randrange(0, game_height - block_size) / block_size) * block_size
         food_color = red
 
         while not game_over:
             if game_start:
-                quit_the_game = splash_screen(game_window, font_style, width, height, score, high_score)
+                quit_the_game = splash_screen(game_window, font_style, game_width, game_height, score, high_score)
                 if quit_the_game:
                     game_active = False
                     break
@@ -72,7 +74,7 @@ def sneeze_snake():
             if game_interrupted:
                 break
 
-            if snake_x >= width or snake_x < 0 or snake_y >= height or snake_y < 0:
+            if snake_x >= game_width or snake_x < 0 or snake_y >= game_height or snake_y < 0:
                 game_over = True
 
             snake_x += snake_x_change
@@ -83,7 +85,6 @@ def sneeze_snake():
                 chaser_x += chaser_speed
             elif chaser_x > snake_x:
                 chaser_x -= chaser_speed
-
             if chaser_y < snake_y:
                 chaser_y += chaser_speed
             elif chaser_y > snake_y:
@@ -98,22 +99,25 @@ def sneeze_snake():
                 if block == snake_head:
                     game_over = True
 
+            # Chaser collision logic
             if abs(snake_x - chaser_x) < block_size and abs(snake_y - chaser_y) < block_size:
                 game_over = True
 
+            # Chaser speed increase logic
             if score >= 10 and score % 10 == 0 and score != last_speed_increase:
                 chaser_speed += 2
                 last_speed_increase = score
 
+            # Food collision logic
             if snake_x == food_x and snake_y == food_y:
-                food_x = round(random.randrange(0, width - block_size) / block_size) * block_size
-                food_y = round(random.randrange(0, height - block_size) / block_size) * block_size
+                food_x = round(random.randrange(0, game_width - block_size) / block_size) * block_size
+                food_y = round(random.randrange(0, game_height - block_size) / block_size) * block_size
                 snake_length += 1
                 score += 1
+                if score > high_score:
+                    high_score = score
 
-            if score > high_score:
-                high_score = score
-
+            # Draw the game elements
             clear_screen(game_window, setting_background_color)
             draw_food(game_window, block_size, food_color, food_x, food_y)
             draw_snake(game_window, block_size, snake_color, snake_list)
@@ -125,7 +129,7 @@ def sneeze_snake():
         if not game_over:
             continue  # If the game is not over, continue without interruption
 
-        restart = game_over_screen(game_window, font_style, width, height, score)
+        restart = game_over_screen(game_window, font_style, game_width, game_height, score)
         if not restart:
             game_active = False  # Exit the loop and end the game
 

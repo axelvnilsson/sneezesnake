@@ -25,7 +25,7 @@ def draw_ticker(game_window, text, text_rect):
 def clear_screen(game_window, background_color):
     game_window.fill(background_color)  # Fill the screen with the background color
 
-def splash_screen(game_window, font_style, width, height, score, high_score):
+def splash_screen(game_window, font_style, game_width, game_height, score, high_score):
     while True:
         clear_screen(game_window,(0, 0, 0))  # Black background
         splash_screen_text1 = font_style.render("This is a better version of snake!", True, (255, 255, 255))
@@ -34,12 +34,12 @@ def splash_screen(game_window, font_style, width, height, score, high_score):
         splash_screen_text4 = font_style.render("[S] to  play!", True, (255, 255, 255))
         splash_screen_text5 = font_style.render("[Q] to  quit!", True, (255, 255, 255))
         splash_screen_text6 = font_style.render("Your highscore is: " + str(high_score), True, (255, 255, 255))
-        game_window.blit(splash_screen_text1, [width / 4, height / 3])
-        game_window.blit(splash_screen_text2, [width / 4, height / 3 + 50])
-        game_window.blit(splash_screen_text3, [width / 4, height / 3 + 100])
-        game_window.blit(splash_screen_text4, [width / 4, height / 3 + 150])
-        game_window.blit(splash_screen_text5, [width / 4, height / 3 + 200])
-        game_window.blit(splash_screen_text6, [width / 4, height / 3 + 250])
+        game_window.blit(splash_screen_text1, [game_width / 4, game_height / 3])
+        game_window.blit(splash_screen_text2, [game_width / 4, game_height / 3 + 50])
+        game_window.blit(splash_screen_text3, [game_width / 4, game_height / 3 + 100])
+        game_window.blit(splash_screen_text4, [game_width / 4, game_height / 3 + 150])
+        game_window.blit(splash_screen_text5, [game_width / 4, game_height / 3 + 200])
+        game_window.blit(splash_screen_text6, [game_width / 4, game_height / 3 + 250])
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -50,15 +50,15 @@ def splash_screen(game_window, font_style, width, height, score, high_score):
                     return False  # to play the game
                 
 
-def game_over_screen(game_window, font_style, width, height, score):
+def game_over_screen(game_window, font_style, game_width, game_height, score):
     while True:
         # clear_screen(game_window,(0, 0, 0))  # Black background
         game_over_text1 = font_style.render("Game Over!", True, (255, 255, 255))
         game_over_text2 = font_style.render("[Q] to Quit ", True, (255, 255, 255))
         game_over_text3 = font_style.render("[P] to Play Again", True, (255, 255, 255))
-        game_window.blit(game_over_text1, [width / 4, height / 3])
-        game_window.blit(game_over_text2, [width / 4, height / 3 + 50])
-        game_window.blit(game_over_text3, [width / 4, height / 3 + 100])
+        game_window.blit(game_over_text1, [game_width / 4, game_height / 3])
+        game_window.blit(game_over_text2, [game_width / 4, game_height / 3 + 50])
+        game_window.blit(game_over_text3, [game_width / 4, game_height / 3 + 100])
 
         # Display score
         score_text = font_style.render("Score: " + str(score), True, (255, 255, 255))
@@ -125,12 +125,12 @@ def ticker_load_facts():
     ticker_tape = " ... ".join([fact.strip() for fact in facts]) + " ... "
     return ticker_tape
 
-def ticker_setup(ticker_tape, ticker_font, ticker_color, screen_width, screen_height):
+def ticker_setup(ticker_tape, ticker_font, ticker_color, screen_game_width, screen_game_height):
     # Initialize ticker with the long text
     text = ticker_font.render(ticker_tape, True, ticker_color)
     text_rect = text.get_rect()
-    text_rect.left = screen_width  # Start off right edge of screen
-    text_rect.bottom = screen_height  # Position at the bottom of the screen
+    text_rect.left = screen_game_width  # Start off right edge of screen
+    text_rect.bottom = screen_game_height  # Position at the bottom of the screen
     return text, text_rect
 
 

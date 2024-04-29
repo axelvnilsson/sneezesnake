@@ -7,9 +7,9 @@ from snake_include import ticker_load_facts, ticker_setup, draw_ticker
 pygame.init()
 
 # Set up screen
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
+game_width = 800
+game_height = 600
+screen = pygame.display.set_mode((game_width, game_height))
 pygame.display.set_caption('Snake Game')
 clock = pygame.time.Clock()
 
@@ -19,14 +19,14 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 # Initial position of the food
-food_x = random.randint(0, screen_width-20)
-food_y = random.randint(0, screen_height-20)
+food_x = random.randint(0, game_width-20)
+food_y = random.randint(0, game_height-20)
 
 # ticker settings
 ticker_font = pygame.font.Font(None, 32)
 ticker_color = WHITE
 ticker_tape = ticker_load_facts()
-text, text_rect = ticker_setup(ticker_tape, ticker_font, ticker_color, screen_width, screen_height)
+text, text_rect = ticker_setup(ticker_tape, ticker_font, ticker_color, game_width, game_height)
 
 # Game loop
 running = True
@@ -51,12 +51,12 @@ while running:
     # Check boundaries for the food
     if food_x < 0:
         food_x = 0
-    elif food_x > screen_width - 20:
-        food_x = screen_width - 20
+    elif food_x > game_width - 20:
+        food_x = game_width - 20
     if food_y < 0:
         food_y = 0
-    elif food_y > screen_height - 20:
-        food_y = screen_height - 20
+    elif food_y > game_height - 20:
+        food_y = game_height - 20
 
     # Draw the food
     pygame.draw.rect(screen, RED, (food_x, food_y, 20, 20))
