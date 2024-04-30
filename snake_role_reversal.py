@@ -3,6 +3,7 @@ import random
 
 def init_game():
     pygame.init()
+    pygame.font.init()  # Ensure the font module is initialized
     game_width, game_height = 800, 600
     screen = pygame.display.set_mode((game_width, game_height))
     pygame.display.set_caption('Snake Game')
@@ -40,7 +41,6 @@ def create_random_snake(game_width, game_height, block_size=20, num_blocks=15):
 
     return snake_positions
 
-
 def handle_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -63,11 +63,20 @@ def check_boundaries(food_x, food_y, game_width, game_height):
     food_y = max(0, min(game_height - 20, food_y))
     return food_x, food_y
 
-def draw_elements(screen, colors, food_x, food_y, snake_positions):
+def draw_elements(screen, colors, food_x, food_y, snake_positions, score):
     screen.fill(colors["black"])
     pygame.draw.rect(screen, colors["red"], (food_x, food_y, 20, 20))
     for x, y in snake_positions:
         pygame.draw.rect(screen, colors["green"], (x, y, 20, 20))
+    font = pygame.font.SysFont(None, 36)
+    score_text = font.render(f"Score: {score}", True, colors["white"])
+    screen.blit(score_text, (10, 10))
+
+def check_collision(food_x, food_y, snake_positions):
+    for x, y in snake_positions:
+        if food_x == x and food_y == y:
+            return True
+    return False
 
 def main():
     screen, game_width, game_height, colors = init_game()
@@ -75,6 +84,7 @@ def main():
     snake_positions = create_random_snake(game_width, game_height)
     clock = pygame.time.Clock()
     snake_timer = 0
+    score = 0
     running = True
 
     while running:
@@ -86,7 +96,10 @@ def main():
         if snake_timer > 1000:  # Every 1000 milliseconds, reset the timer and create a new snake
             snake_positions = create_random_snake(game_width, game_height)
             snake_timer = 0
-        draw_elements(screen, colors, food_x, food_y, snake_positions)
+        if check_collision(food_x, food_y, snake_positions):
+            score += 1
+            food_x, food_y = load_game_assets(game_width, game_height)  # Relocate food after scoring
+        draw_elements(screen, colors, food_x, food_y, snake_positions, score)
         pygame.display.update()
         clock.tick(40)
 
