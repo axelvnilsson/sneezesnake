@@ -44,6 +44,9 @@ class Ball:
             if self.rect.colliderect(paddle.rect):
                 self.dx = -self.dx
                 break
+        # Reset the ball if it goes off the screen
+        if self.rect.left <= 0 or self.rect.right >= SCREEN_WIDTH:
+            self.reset()
 
     def reset(self):
         self.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
