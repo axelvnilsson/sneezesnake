@@ -6,6 +6,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 PADDLE_WIDTH, PADDLE_HEIGHT = 15, 90
 BALL_SIZE = 20
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 FPS = 60
 
 # Initialize Pygame
@@ -55,11 +56,20 @@ class Ball:
     def draw(self):
         pygame.draw.ellipse(screen, WHITE, self.rect)
 
+
+def draw_score(screen, color, score):
+    font = pygame.font.SysFont(None, 36)
+    score_text = font.render(f"Score: {score}", True, color, BLACK)
+    screen.blit(score_text, (10, 10))
+
+
 def main():
     paddle1 = Paddle(30, SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2)
     paddle2 = Paddle(SCREEN_WIDTH - 30 - PADDLE_WIDTH, SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2)
     ball = Ball(SCREEN_WIDTH // 2 - BALL_SIZE // 2, SCREEN_HEIGHT // 2 - BALL_SIZE // 2)
     running = True
+    score = 0
+
 
     while running:
         for event in pygame.event.get():
@@ -79,11 +89,13 @@ def main():
             ball.reset()
 
         ball.move([paddle1, paddle2])
+        score = score + 1
 
         screen.fill(0)
         paddle1.draw()
         paddle2.draw()
         ball.draw()
+        draw_score(screen, WHITE, score)
 
         pygame.display.flip()
         clock.tick(FPS)
