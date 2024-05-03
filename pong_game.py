@@ -8,6 +8,10 @@ BALL_SIZE = 20
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 FPS = 60
+NET_WIDTH = 4
+NET_HEIGHT = 20
+NET_COLOR = WHITE
+NET_POSITION_X = SCREEN_WIDTH // 2 - NET_WIDTH // 2  # Center of the screen
 
 # Initialize Pygame
 pygame.init()
@@ -34,7 +38,7 @@ class Ball:
         self.dx = 5  # Horizontal movement
         self.dy = 5  # Vertical movement
 
-    def move(self, paddles):
+    def move(self, paddles, score1, score2):
         self.rect.x += self.dx
         self.rect.y += self.dy
         # Bounce off the top and bottom of the screen
@@ -46,7 +50,11 @@ class Ball:
                 self.dx = -self.dx
                 break
         # Reset the ball if it goes off the screen
-        if self.rect.left <= 0 or self.rect.right >= SCREEN_WIDTH:
+        if self.rect.left <= 0:
+            score2 += 1
+            self.reset()
+        if self.rect.right >= SCREEN_WIDTH:
+            score1 += 1
             self.reset()
 
     def reset(self):
@@ -56,24 +64,42 @@ class Ball:
     def draw(self):
         pygame.draw.ellipse(screen, WHITE, self.rect)
 
-
-def draw_score(screen, color, score):
+def draw_score(screen, color, score1, score2):
     font = pygame.font.SysFont(None, 36)
-    score_text = font.render(f"Score: {score}", True, color, BLACK)
-    screen.blit(score_text, (10, 10))
+    # Calculate the position to center the text at 1/4 the screen width
+    one_quarter_x = SCREEN_WIDTH // 4
+    three_quarter_x = SCREEN_WIDTH // 4 * 3
 
+    # Render the text for score1
+    score1_text = font.render(f"Player One: {score1}", True, color, BLACK)
+    text_width, text_height = font.size(f"Player one: {score1}")
+    # Adjust the position to center the text at one_quarter_x
+    score1_position_x = one_quarter_x - (text_width // 2)
+    screen.blit(score1_text, (score1_position_x, 10))
+
+    # Render the text for score2
+    score2_text = font.render(f"Player Two: {score2}", True, color, BLACK)
+    text_width, text_height = font.size(f"Player two: {score2}")
+    # Adjust the position to center the text at one_quarter_x
+    score2_position_x = three_quarter_x - (text_width // 2)
+    screen.blit(score2_text, (score2_position_x, 10))
+
+def draw_net():
+    # Draw the net
+    for y in range(0, SCREEN_HEIGHT, NET_HEIGHT * 2):
+        pygame.draw.rect(screen, NET_COLOR, (NET_POSITION_X, y, NET_WIDTH, NET_HEIGHT))
 
 def main():
     paddle1 = Paddle(30, SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2)
     paddle2 = Paddle(SCREEN_WIDTH - 30 - PADDLE_WIDTH, SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2)
     ball = Ball(SCREEN_WIDTH // 2 - BALL_SIZE // 2, SCREEN_HEIGHT // 2 - BALL_SIZE // 2)
     running = True
-    score = 0
-
+    score1 = 0
+    score2 = 0
 
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type is pygame.QUIT:
                 running = False
 
         keys = pygame.key.get_pressed()
@@ -88,14 +114,14 @@ def main():
         if keys[pygame.K_SPACE]:
             ball.reset()
 
-        ball.move([paddle1, paddle2])
-        score = score + 1
+        ball.move([paddle1, paddle2], score1, score2)
 
-        screen.fill(0)
+        screen.fill(BLACK)
+        draw_net()  # Draw the net on the screen
         paddle1.draw()
         paddle2.draw()
         ball.draw()
-        draw_score(screen, WHITE, score)
+        draw_score(screen, WHITE, score1, score2)
 
         pygame.display.flip()
         clock.tick(FPS)
