@@ -16,8 +16,8 @@ def clear_axes(ax):
 
 def draw_grid(ax, grid_scale):
     ax.grid(True, which='both', color='lightgray', linestyle='-', linewidth=0.25)
-    ax.set_xlim(-10 * grid_scale, 10 * grid_scale)
-    ax.set_ylim(-10 * grid_scale, 10 * grid_scale)
+    ax.set_xlim(-20 * grid_scale, 20 * grid_scale)
+    ax.set_ylim(-20 * grid_scale, 20 * grid_scale)
     ax.tick_params(axis='both', which='major', labelsize=4, colors='gray', width=0.25)
 
 def plot_dot(ax, x, y):
@@ -91,27 +91,29 @@ grid_scale = ttk.Scale(root, from_=0.1, to=2, orient=tk.HORIZONTAL, command=upda
 
 ttk.Label(root, text="X:").grid(row=1, column=0, sticky='w')
 x_entry.grid(row=1, column=1, sticky='ew')
+x_entry.bind("<FocusOut>", update_plot_from_entries)
 
 ttk.Button(root, text="↑", command=increment_x).grid(row=1, column=2, sticky='ew')
 ttk.Button(root, text="↓", command=decrement_x).grid(row=1, column=3, sticky='ew')
 
-x_scale.grid(row=2, column=0, columnspan=1, sticky='ew')
+x_scale.grid(row=2, column=0, columnspan=4, sticky='ew')
 x_scale.set(0)
 
-ttk.Label(root, text="Y:").grid(row=3, column=0, columnspan=1, sticky='w')
+ttk.Label(root, text="Y:").grid(row=3, column=0, sticky='w')
 y_entry.grid(row=3, column=1, sticky='ew')
+y_entry.bind("<FocusOut>", update_plot_from_entries)
 
 ttk.Button(root, text="↑", command=increment_y).grid(row=3, column=2, sticky='ew')
 ttk.Button(root, text="↓", command=decrement_y).grid(row=3, column=3, sticky='ew')
 
-y_scale.grid(row=4, column=0, columnspan=1, sticky='ew')
+y_scale.grid(row=4, column=0, columnspan=4, sticky='ew')
 y_scale.set(0)
 
 ttk.Label(root, text="Grid Scale:").grid(row=5, column=0, sticky='w')
-grid_scale.grid(row=5, column=1, columnspan=1, sticky='ew')
+grid_scale.grid(row=5, column=1, columnspan=3, sticky='ew')
 grid_scale.set(1)
 
-ttk.Button(root, text="Update from Entries", command=update_plot_from_entries).grid(row=6, column=0, columnspan=2, sticky='ew')
+ttk.Button(root, text="Update from Entries", command=update_plot_from_entries).grid(row=6, column=0, columnspan=4, sticky='ew')
 
 update_plot_from_entries()  # Initial plot update
 
