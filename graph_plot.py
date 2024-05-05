@@ -27,7 +27,8 @@ def draw_dot(ax, x, y, grid_scale):
 def update_plot(ax, x, y):
     reset_axes(ax)
     draw_grid(ax, grid_scale.get())
-    draw_dot(ax, x, y,grid_scale.get())
+    draw_dot(ax, x, y, grid_scale.get())
+    canvas.draw()  # Update canvas
 
 def update_plot_from_sliders(val):
     x = x_scale.get()
@@ -37,7 +38,6 @@ def update_plot_from_sliders(val):
     y_entry.delete(0, tk.END)
     y_entry.insert(0, f"{y:.1f}")
     update_plot(ax, x, y)
-    canvas.draw()  # Update canvas
 
 def update_plot_from_entries(event=None):
     x = float(x_entry.get())
@@ -45,7 +45,6 @@ def update_plot_from_entries(event=None):
     x_scale.set(x)
     y_scale.set(y)
     update_plot(ax, x, y)
-    canvas.draw()  # Update canvas
 
 def update_entry(entry, increment):
     value = float(entry.get())
@@ -68,7 +67,6 @@ def decrement_y():
 
 def update_grid_scale(val):
     update_plot(ax, x_scale.get(), y_scale.get())
-    canvas.draw()  # Update canvas
 
 root = tk.Tk()
 root.title("Single Dot Plotter")
