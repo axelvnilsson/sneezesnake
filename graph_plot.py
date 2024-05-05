@@ -3,7 +3,7 @@ from tkinter import ttk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-def clear_axes(ax):
+def reset_axes(ax):
     ax.clear()
     ax.spines['left'].set_position('center')
     ax.spines['left'].set_color('gray')
@@ -16,15 +16,18 @@ def clear_axes(ax):
 
 def draw_grid(ax, grid_scale):
     ax.grid(True, which='both', color='lightgray', linestyle='-', linewidth=0.25)
-    ax.set_xlim(-20 * grid_scale, 20 * grid_scale)
-    ax.set_ylim(-20 * grid_scale, 20 * grid_scale)
+    ax.set_xlim(-10 * grid_scale, 10 * grid_scale)
+    ax.set_ylim(-10 * grid_scale, 10 * grid_scale)
     ax.tick_params(axis='both', which='major', labelsize=4, colors='gray', width=0.25)
 
-def plot_dot(ax, x, y):
-    clear_axes(ax)
-    draw_grid(ax, grid_scale.get())
+def draw_dot(ax, x, y, grid_scale):
     ax.plot(x, y, marker='o', color='black', markersize=3)
-    ax.text(x + 0.4, y + 0.4, f"({x:.1f}, {y:.1f})", fontsize=5, color='gray')
+    ax.text(x + 0.4 * grid_scale, y + 0.4 * grid_scale, f"({x:.1f}, {y:.1f})", fontsize=5, color='black')
+
+def update_plot(ax, x, y):
+    reset_axes(ax)
+    draw_grid(ax, grid_scale.get())
+    draw_dot(ax, x, y,grid_scale.get())
 
 def update_plot_from_sliders(val):
     x = x_scale.get()
@@ -33,7 +36,7 @@ def update_plot_from_sliders(val):
     x_entry.insert(0, f"{x:.1f}")
     y_entry.delete(0, tk.END)
     y_entry.insert(0, f"{y:.1f}")
-    plot_dot(ax, x, y)
+    update_plot(ax, x, y)
     canvas.draw()  # Update canvas
 
 def update_plot_from_entries(event=None):
@@ -41,7 +44,7 @@ def update_plot_from_entries(event=None):
     y = float(y_entry.get())
     x_scale.set(x)
     y_scale.set(y)
-    plot_dot(ax, x, y)
+    update_plot(ax, x, y)
     canvas.draw()  # Update canvas
 
 def update_entry(entry, increment):
@@ -64,7 +67,7 @@ def decrement_y():
     update_entry(y_entry, -0.1)
 
 def update_grid_scale(val):
-    plot_dot(ax, x_scale.get(), y_scale.get())
+    update_plot(ax, x_scale.get(), y_scale.get())
     canvas.draw()  # Update canvas
 
 root = tk.Tk()
