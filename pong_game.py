@@ -50,11 +50,8 @@ class Ball:
                 self.dx = -self.dx
                 break
         # Reset the ball if it goes off the screen
-        if self.rect.left <= 0:
-            score2 += 1
-            self.reset()
-        if self.rect.right >= SCREEN_WIDTH:
-            score1 += 1
+        # Reset the ball if it goes off the screen
+        if self.rect.left <= 0 or self.rect.right >= SCREEN_WIDTH:
             self.reset()
 
     def reset(self):
@@ -79,7 +76,7 @@ def draw_score(screen, color, score1, score2):
 
     # Render the text for score2
     score2_text = font.render(f"Player Two: {score2}", True, color, BLACK)
-    text_width, text_height = font.size(f"Player two: {score2}")
+    text_width, text_height = font.size(f"Player Two: {score2}")
     # Adjust the position to center the text at one_quarter_x
     score2_position_x = three_quarter_x - (text_width // 2)
     screen.blit(score2_text, (score2_position_x, 10))
@@ -115,6 +112,12 @@ def main():
             ball.reset()
 
         ball.move([paddle1, paddle2], score1, score2)
+        # score1 = score1 +1 
+        # score2 = score2 +1
+        if ball.rect.left == 10:
+            score2 += 1
+        if ball.rect.right == SCREEN_WIDTH - 10:
+            score1 += 1
 
         screen.fill(BLACK)
         draw_net()  # Draw the net on the screen
