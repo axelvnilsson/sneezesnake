@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 
 # Constants
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
@@ -48,6 +49,8 @@ class Ball:
         for paddle in paddles:
             if self.rect.colliderect(paddle.rect):
                 self.dx = -self.dx
+                sound_file = "Sounds/Bounce.mp3"
+                os.system(f"afplay {sound_file}&")
                 break
         # Reset the ball if it goes off the screen
         # Reset the ball if it goes off the screen
