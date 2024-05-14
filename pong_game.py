@@ -26,7 +26,6 @@ class Paddle:
 
     def move(self, y):
         self.rect.y += y
-        # Prevent the paddle from moving out of the screen
         self.rect.y = max(self.rect.y, 0)
         self.rect.y = min(self.rect.y, SCREEN_HEIGHT - PADDLE_HEIGHT)
 
@@ -39,7 +38,7 @@ class Ball:
         self.dx = 5  # Horizontal movement
         self.dy = 5  # Vertical movement
 
-    def move(self, paddles, score1, score2):
+    def move(self, paddles):
         self.rect.x += self.dx
         self.rect.y += self.dy
         # Bounce off the top and bottom of the screen
@@ -48,11 +47,14 @@ class Ball:
         # Check for collisions with the paddles
         for paddle in paddles:
             if self.rect.colliderect(paddle.rect):
+                # Calculate the collision point
+                collision_point = (self.rect.centery - paddle.rect.centery) / (PADDLE_HEIGHT / 2)
+                # Adjust the ball's vertical direction based on the collision point
+                self.dy = collision_point * 5
                 self.dx = -self.dx
                 sound_file = "Sounds/Bounce.mp3"
                 os.system(f"afplay {sound_file}&")
                 break
-        # Reset the ball if it goes off the screen
         # Reset the ball if it goes off the screen
         if self.rect.left <= 0 or self.rect.right >= SCREEN_WIDTH:
             self.reset()
@@ -73,21 +75,37 @@ def draw_score(screen, color, score1, score2):
     # Render the text for score1
     score1_text = font.render(f"Player One: {score1}", True, color, BLACK)
     text_width, text_height = font.size(f"Player one: {score1}")
-    # Adjust the position to center the text at one_quarter_x
     score1_position_x = one_quarter_x - (text_width // 2)
     screen.blit(score1_text, (score1_position_x, 10))
 
     # Render the text for score2
     score2_text = font.render(f"Player Two: {score2}", True, color, BLACK)
     text_width, text_height = font.size(f"Player Two: {score2}")
-    # Adjust the position to center the text at one_quarter_x
     score2_position_x = three_quarter_x - (text_width // 2)
     screen.blit(score2_text, (score2_position_x, 10))
 
 def draw_net():
-    # Draw the net
     for y in range(0, SCREEN_HEIGHT, NET_HEIGHT * 2):
         pygame.draw.rect(screen, NET_COLOR, (NET_POSITION_X, y, NET_WIDTH, NET_HEIGHT))
+
+def handle_events():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            return False
+    return True
+
+def handle_input(paddle1, paddle2):
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_w]:
+        paddle1.move(-5)
+    if keys[pygame.K_s]:
+        paddle1.move(5)
+    if keys[pygame.K_UP]:
+        paddle2.move(-5)
+    if keys[pygame.K_DOWN]:
+        paddle2.move(5)
+    if keys[pygame.K_SPACE]:
+        ball.reset()
 
 def main():
     paddle1 = Paddle(30, SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2)
@@ -98,32 +116,19 @@ def main():
     score2 = 0
 
     while running:
-        for event in pygame.event.get():
-            if event.type is pygame.QUIT:
-                running = False
+        running = handle_events()
+        handle_input(paddle1, paddle2)
+        ball.move([paddle1, paddle2])
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            paddle1.move(-5)
-        if keys[pygame.K_s]:
-            paddle1.move(5)
-        if keys[pygame.K_UP]:
-            paddle2.move(-5)
-        if keys[pygame.K_DOWN]:
-            paddle2.move(5)
-        if keys[pygame.K_SPACE]:
-            ball.reset()
-
-        ball.move([paddle1, paddle2], score1, score2)
-        # score1 = score1 +1 
-        # score2 = score2 +1
         if ball.rect.left == 10:
             score2 += 1
+            ball.reset()
         if ball.rect.right == SCREEN_WIDTH - 10:
             score1 += 1
+            ball.reset()
 
         screen.fill(BLACK)
-        draw_net()  # Draw the net on the screen
+        draw_net()
         paddle1.draw()
         paddle2.draw()
         ball.draw()
